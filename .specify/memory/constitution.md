@@ -1,55 +1,57 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# Full Stack Todo App Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Premium Aesthetics First
+**Visual Excellence is Mandatory.**
+-   **No "Basic" Designs**: Every UI element must look polished. Use clear typography, proper spacing (whitespace), and harmonious color palettes.
+-   **Tailwind Proficiency**: Use Tailwind CSS for all styling. Avoid vanilla CSS or CSS-in-JS libraries unless critical for complex animations.
+-   **Micro-Interactions**: Hover states, focus rings, and transition effects are required for all interactive elements.
+-   **Responsive**: Mobile-first design is non-negotiable.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Explicit Architecture Partitioning
+**Strict Separation of Concerns.**
+-   **Server Components (Default)**: Use for data fetching, accessing the database, and keeping secrets.
+-   **Client Components**: Use ONLY for interactivity (forms, onClick, useEffect). Must be marked with `'use client'`.
+-   **Server Actions**: Use `src/server/actions` for ALL data mutations. NEVER use Next.js API Routes (`pages/api` or `app/api`) for internal logic.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Data Integrity & Type Safety
+**Trust Dynamic data, but Verify it.**
+-   **Zod Validation**: ALL inputs (Server Actions, Forms, URL params) MUST be validated with Zod schemas.
+-   **Strict TypeScript**: No `any` types. All database models must use inferred types from Drizzle.
+-   **Migrations**: Database schema changes MUST be done via Drizzle Kit migrations. NEVER edit the production database manually.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Security by Design
+**Secure Defaults.**
+-   **Authentication**: All private routes must verify the `Better-Auth` session before rendering or executing logic.
+-   **Authorization**: Verify user ownership of data (e.g., `todo.userId === session.user.id`) before update/delete.
+-   **Secrets**: API keys and database URLs must be loaded from Environment Variables (`.env`). NEVER commit them to git.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Performance & Optimization
+-   **Image Optimization**: Use `next/image` with proper sizing and formats (WebP).
+-   **Streaming**: Use `Suspense` and `loading.tsx` to handle async data fetching states gracefully.
+-   **Font Optimization**: Use `next/font` for zero layout shift.
 
-### [PRINCIPLE_6_NAME]
+## Development Workflow
 
+### 1. Planning Phase (SDD)
+-   Before writing code, assume the **Architect Persona**.
+-   Update `specs/todo-app/plan.md` and `tasks.md`.
+-   Design the Component Hierarchy and State Flow.
 
-[PRINCIPLE__DESCRIPTION]
+### 2. Implementation Phase
+-   Write the "Skeleton" (Layouts & Page structure) first.
+-   Implement the "Data Layer" (Schema & DB connection) second.
+-   Implement "Logic" (Server Actions) third.
+-   Connect "UI" (Client Components) last.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
-
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
-
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### 3. Verification Phase
+-   **Linting**: Code must pass `npm run lint`.
+-   **Build**: Application must compile with `npm run build` without errors.
+-   **Manual Check**: Verify "Premium" look and feel in the browser.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
-
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
-
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+This Constitution is the supreme law of the project.
+**Any code violating these principles must be rejected.**
+-   **Last Updated**: 2025-12-18
+-   **Project**: Full Stack Todo App

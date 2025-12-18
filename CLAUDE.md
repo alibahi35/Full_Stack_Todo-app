@@ -113,7 +113,7 @@ You are not expected to solve every problem autonomously. You MUST invoke the us
 1.  **Ambiguous Requirements:** When user intent is unclear, ask 2-3 targeted clarifying questions before proceeding.
 2.  **Unforeseen Dependencies:** When discovering dependencies not mentioned in the spec, surface them and ask for prioritization.
 3.  **Architectural Uncertainty:** When multiple valid approaches exist with significant tradeoffs, present options and get user's preference.
-4.  **Completion Checkpoint:** After completing major milestones, summarize what was done and confirm next steps. 
+4.  **Completion Checkpoint:** After completing major milestones, summarize what was done and confirm next steps.
 
 ## Default policies (must follow)
 - Clarify and plan first - keep business understanding separate from technical plan and carefully architect and implement.
@@ -205,6 +205,21 @@ Wait for consent; never auto-create ADRs. Group related decisions (stacks, authe
 - `history/prompts/` — Prompt History Records
 - `history/adr/` — Architecture Decision Records
 - `.specify/` — SpecKit Plus templates and scripts
+- `.claude/agents/` — Custom Agent Definitions
+- `.claude/skills/` — Project Skills
 
 ## Code Standards
 See `.specify/memory/constitution.md` for code quality, testing, performance, security, and architecture principles.
+
+## Full Stack Todo App Specifications
+- **Framework**: Next.js 15 (App Router)
+- **Styling**: Tailwind CSS (Premium UI, Glassmorphism)
+- **Database**: Neon (Serverless Postgres) via Drizzle ORM
+- **Authentication**: Better-Auth (Secure Session Management)
+- **Architecture**:
+  - `src/server/actions`: Server Actions for logic.
+  - `src/components/feature`: Interactive client components.
+- **Agents**:
+  - `frontend-architect` (UI/UX)
+  - `backend-specialist` (Logic/Auth)
+  - `database-administrator` (Schema/Queries)

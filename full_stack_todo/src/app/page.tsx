@@ -75,7 +75,7 @@ export default function Home() {
                     >
                         <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black/40 p-2 lg:p-4 shadow-[0_0_100px_rgba(var(--primary),0.05)] backdrop-blur-3xl animate-float">
                             <Image
-                                src="https://s3-figma-hubfile-images-production.figma.com/hub/file/carousel/img/6da8ca1391c90dd50f6dcb4d2051793e70525e32"
+                                src="/todo.png"
                                 alt="Focus Dashboard Preview"
                                 width={1200}
                                 height={675}

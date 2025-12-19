@@ -9,16 +9,30 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
+import { signupSchema } from "@/lib/validations/auth";
+import { AlertCircle } from "lucide-react";
+
 export default function SignupPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
     const handleSignup = async () => {
+        setError(null);
         setLoading(true);
-        await authClient.signUp.emailAndPassword({
+
+        // Client-side Validation
+        const validation = signupSchema.safeParse({ email, password, name });
+        if (!validation.success) {
+            setError(validation.error.errors[0].message);
+            setLoading(false);
+            return;
+        }
+
+        await authClient.signUp.email({
             email,
             password,
             name,
@@ -26,8 +40,8 @@ export default function SignupPage() {
             onSuccess: () => {
                 router.push("/dashboard");
             },
-            onError: (ctx) => {
-                alert(ctx.error.message);
+            onError: (ctx: { error: { message: string } }) => {
+                setError(ctx.error.message);
                 setLoading(false);
             },
         });
@@ -58,6 +72,18 @@ export default function SignupPage() {
                         </p>
                     </CardHeader>
                     <CardContent className="space-y-5 pb-8">
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: error ? "auto" : 0, opacity: error ? 1 : 0 }}
+                            className="overflow-hidden"
+                        >
+                            {error && (
+                                <div className="flex items-center gap-2 rounded-xl border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive-foreground">
+                                    <AlertCircle className="h-4 w-4" />
+                                    <span>{error}</span>
+                                </div>
+                            )}
+                        </motion.div>
                         <div className="space-y-4">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-muted-foreground/80 ml-1">Full Name</label>

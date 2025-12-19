@@ -9,23 +9,37 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
+import { loginSchema } from "@/lib/validations/auth";
+import { AlertCircle } from "lucide-react";
+
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
     const handleLogin = async () => {
+        setError(null);
         setLoading(true);
-        await authClient.signIn.emailAndPassword({
+
+        // Client-side Validation
+        const validation = loginSchema.safeParse({ email, password });
+        if (!validation.success) {
+            setError(validation.error.errors[0].message);
+            setLoading(false);
+            return;
+        }
+
+        await authClient.signIn.email({
             email,
             password,
         }, {
             onSuccess: () => {
                 router.push("/dashboard");
             },
-            onError: (ctx) => {
-                alert(ctx.error.message);
+            onError: (ctx: { error: { message: string } }) => {
+                setError(ctx.error.message);
                 setLoading(false);
             },
         });
@@ -46,7 +60,7 @@ export default function LoginPage() {
                 <Card className="glass border-white/10 shadow-2xl">
                     <CardHeader className="space-y-2 pb-8 pt-8">
                         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary mb-2">
-                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /></svg>
                         </div>
                         <CardTitle className="text-center text-3xl font-bold tracking-tight bg-gradient-to-b from-white to-white/70 bg-clip-text text-transparent">
                             Sign In
@@ -56,6 +70,18 @@ export default function LoginPage() {
                         </p>
                     </CardHeader>
                     <CardContent className="space-y-5 pb-8">
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: error ? "auto" : 0, opacity: error ? 1 : 0 }}
+                            className="overflow-hidden"
+                        >
+                            {error && (
+                                <div className="flex items-center gap-2 rounded-xl border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive-foreground">
+                                    <AlertCircle className="h-4 w-4" />
+                                    <span>{error}</span>
+                                </div>
+                            )}
+                        </motion.div>
                         <div className="space-y-4">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-muted-foreground/80 ml-1">Email address</label>

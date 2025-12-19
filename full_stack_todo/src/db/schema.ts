@@ -1,4 +1,4 @@
-import { pgTable, text, boolean, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { pgTable, text, boolean, timestamp, uuid, index } from 'drizzle-orm/pg-core';
 
 export const user = pgTable("user", {
     id: text("id").primaryKey(),
@@ -19,6 +19,10 @@ export const session = pgTable("session", {
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
     userId: text("user_id").notNull().references(() => user.id)
+}, (table) => {
+    return {
+        userIdIdx: index("session_user_id_idx").on(table.userId),
+    };
 });
 
 export const account = pgTable("account", {
@@ -35,6 +39,10 @@ export const account = pgTable("account", {
     password: text("password"),
     createdAt: timestamp("created_at").notNull(),
     updatedAt: timestamp("updated_at").notNull()
+}, (table) => {
+    return {
+        userIdIdx: index("account_user_id_idx").on(table.userId),
+    };
 });
 
 export const verification = pgTable("verification", {
@@ -55,4 +63,8 @@ export const todos = pgTable('todos', {
     dueDate: timestamp('due_date'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
+}, (table) => {
+    return {
+        userIdIdx: index("todo_user_id_idx").on(table.userId),
+    };
 });

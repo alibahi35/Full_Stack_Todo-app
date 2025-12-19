@@ -14,6 +14,10 @@ To guide the creation of a high-performance, full-stack web application using Ne
 -   **Server Components**: FETCH data here. Access Database here. Keep secrets here.
 -   **Client Components**: INTERACTIVITY here (onClick, onChange). Use `use client` directive.
 
+## Security Architecture
+-   **Proxy (`proxy.ts`)**: Routing only. No DB calls.
+-   **DAL**: Authorization logic goes in Server Actions/Utils.
+
 ## Data Mutation (Server Actions)
 Instead of API Routes, use Server Actions for form submissions and mutations:
 ```typescript

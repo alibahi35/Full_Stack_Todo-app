@@ -49,7 +49,12 @@ A premium, full-stack Todo application featuring a modern, responsive user inter
 **Todos**
 -   `id`: UUID, `userId`: UUID (FK), `content`: Text, `isCompleted`: Boolean, `createdAt`: Date.
 
+### 3.3 Security Architecture (Next.js 16)
+- **Proxy (formerly Middleware)**: Use `src/proxy.ts` ONLY for lightweight optimistic redirects (e.g., checking cookie existence).
+- **Data Access Layer (DAL)**: All robust authorization checks must happen in Server Actions or Utils, closest to the data.
+
 ## 4. Agents & Skills Breakdown
+
 
 ### Agents
 1.  **frontend-architect**:

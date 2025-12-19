@@ -29,5 +29,7 @@ Securely implement user authentication using Better-Auth with Neon Database.
 -   **File**: `src/lib/auth-client.ts`
 -   **Hook**: `const { data: session } = authClient.useSession();`
 
-## 3. Middleware
--   Protect dashboard routes in `middleware.ts` or via a higher-order component server-side.
+## 3. Proxy (Optimistic Auth)
+-   **File**: `src/proxy.ts` (Next.js 16+)
+-   Use only for lightweight redirects (e.g., if no cookie, redirect to login).
+-   **Do NOT** verify session tokens here; use Server Actions or DAL components strictly.

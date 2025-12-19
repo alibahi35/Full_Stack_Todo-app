@@ -51,6 +51,8 @@ export const todos = pgTable('todos', {
     userId: text('user_id').references(() => user.id).notNull(),
     content: text('content').notNull(),
     isCompleted: boolean('is_completed').default(false).notNull(),
+    priority: text('priority', { enum: ['low', 'medium', 'high'] }).default('low').notNull(),
+    dueDate: timestamp('due_date'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

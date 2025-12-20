@@ -23,36 +23,56 @@ export async function getTodos() {
 }
 
 export async function createTodo(formData: FormData) {
-    const session = await auth.api.getSession({
-        headers: await headers()
-    });
+    try {
+        const session = await auth.api.getSession({
+            headers: await headers()
+        });
 
-    if (!session?.user) {
-        throw new Error("Unauthorized");
+        if (!session?.user) {
+            throw new Error("Unauthorized");
+        }
+
+        console.log("Session user:", session.user);
+        console.log("User ID:", session.user.id);
+
+        // Extract and convert FormData values to proper types
+        const content = formData.get("content");
+        const priority = formData.get("priority");
+        const dueDate = formData.get("dueDate");
+
+        const rawData = {
+            content: content ? String(content) : "",
+            priority: priority ? String(priority) : "low",
+            dueDate: dueDate ? String(dueDate) : undefined,
+        };
+
+        console.log("Raw data before validation:", rawData);
+
+        const validation = createTodoSchema.safeParse(rawData);
+
+        if (!validation.success) {
+            const errorMessage = validation.error.errors[0].message;
+            console.error("Validation error:", errorMessage, validation.error.errors);
+            throw new Error(errorMessage);
+        }
+
+        const { content: validatedContent, priority: validatedPriority, dueDate: validatedDueDate } = validation.data;
+
+        console.log("About to insert todo with userId:", session.user.id);
+
+        await db.insert(todos).values({
+            userId: session.user.id,
+            content: validatedContent,
+            priority: validatedPriority,
+            dueDate: validatedDueDate ? new Date(validatedDueDate) : null,
+        });
+
+        console.log("Todo inserted successfully");
+        revalidatePath("/dashboard");
+    } catch (error) {
+        console.error("Error in createTodo:", error);
+        throw error;
     }
-
-    const rawData = {
-        content: formData.get("content"),
-        priority: formData.get("priority"),
-        dueDate: formData.get("dueDate"),
-    };
-
-    const validation = createTodoSchema.safeParse(rawData);
-
-    if (!validation.success) {
-        throw new Error(validation.error.errors[0].message);
-    }
-
-    const { content, priority, dueDate } = validation.data;
-
-    await db.insert(todos).values({
-        userId: session.user.id,
-        content,
-        priority,
-        dueDate: dueDate ? new Date(dueDate) : null,
-    });
-
-    revalidatePath("/dashboard");
 }
 
 export async function toggleTodo(id: string, isCompleted: boolean) {

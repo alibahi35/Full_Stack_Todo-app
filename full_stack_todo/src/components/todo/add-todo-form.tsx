@@ -15,14 +15,19 @@ export function AddTodoForm() {
         e.preventDefault();
         if (!content.trim()) return;
         setLoading(true);
+
         const formData = new FormData();
         formData.append("content", content);
+        formData.append("priority", "low");
+
+        console.log("Form submission - content:", content);
+        console.log("Form submission - priority:", "low");
 
         try {
             await createTodo(formData);
             setContent("");
         } catch (error) {
-            console.error("Failed to add todo");
+            console.error("Failed to add todo:", error);
         } finally {
             setLoading(false);
         }

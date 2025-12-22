@@ -18,6 +18,7 @@ export default function SignupPage() {
     const [name, setName] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState(false);
     const router = useRouter();
 
     const handleSignup = async () => {
@@ -37,8 +38,12 @@ export default function SignupPage() {
             password,
             name,
         }, {
-            onSuccess: () => {
-                router.push("/dashboard");
+            onSuccess: async () => {
+                // Better-Auth auto-signs in to create user record properly
+                // Now we sign out immediately to enforce manual login
+                await authClient.signOut();
+                setSuccess(true);
+                setLoading(false);
             },
             onError: (ctx: { error: { message: string } }) => {
                 setError(ctx.error.message);
@@ -46,6 +51,41 @@ export default function SignupPage() {
             },
         });
     };
+
+    if (success) {
+        return (
+            <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-background">
+                {/* Ambient Background Orbs */}
+                <div className="ambient-glow purple-glow h-[400px] w-[400px] -top-20 -right-20 animate-float opacity-20" />
+                <div className="ambient-glow blue-glow h-[300px] w-[300px] -bottom-10 -left-10 animate-float delay-1000 opacity-10" />
+
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="w-full max-w-[420px] px-4"
+                >
+                    <Card className="glass border-white/10 shadow-2xl text-center p-6">
+                        <CardHeader className="pb-2">
+                            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10 text-green-500 mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                            </div>
+                            <CardTitle className="text-2xl font-bold text-white">Account Created!</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-6 pt-2">
+                            <p className="text-muted-foreground">
+                                Your account has been successfully created. You can now access your dashboard.
+                            </p>
+                            <Link href="/login">
+                                <Button className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90">
+                                    Sign In to Dashboard
+                                </Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+                </motion.div>
+            </div>
+        );
+    }
 
     return (
         <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-background">

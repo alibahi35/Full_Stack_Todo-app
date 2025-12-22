@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { todos } from "@/db/schema";
+import { todos, user } from "@/db/schema";
 import { auth } from "@/lib/auth"; // Server-side auth
 import { createTodoSchema, updateTodoSchema } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
@@ -24,16 +24,22 @@ export async function getTodos() {
 
 export async function createTodo(formData: FormData) {
     try {
+        console.log('🔵 [createTodo] Starting...');
+
         const session = await auth.api.getSession({
             headers: await headers()
         });
 
+        console.log('🔵 [createTodo] Session:', session?.user ? {
+            id: session.user.id,
+            email: session.user.email,
+            name: session.user.name
+        } : 'NO SESSION');
+
         if (!session?.user) {
+            console.error('❌ [createTodo] No session found');
             throw new Error("Unauthorized");
         }
-
-        console.log("Session user:", session.user);
-        console.log("User ID:", session.user.id);
 
         // Extract and convert FormData values to proper types
         const content = formData.get("content");
@@ -46,19 +52,25 @@ export async function createTodo(formData: FormData) {
             dueDate: dueDate ? String(dueDate) : undefined,
         };
 
-        console.log("Raw data before validation:", rawData);
+        console.log('🔵 [createTodo] Raw data:', rawData);
 
         const validation = createTodoSchema.safeParse(rawData);
 
         if (!validation.success) {
             const errorMessage = validation.error.errors[0].message;
-            console.error("Validation error:", errorMessage, validation.error.errors);
+            console.error('❌ [createTodo] Validation failed:', validation.error.errors);
             throw new Error(errorMessage);
         }
 
         const { content: validatedContent, priority: validatedPriority, dueDate: validatedDueDate } = validation.data;
 
-        console.log("About to insert todo with userId:", session.user.id);
+        console.log('🔵 [createTodo] Validated data:', {
+            content: validatedContent,
+            priority: validatedPriority,
+            dueDate: validatedDueDate
+        });
+
+        console.log('🔵 [createTodo] Attempting to insert with userId:', session.user.id);
 
         await db.insert(todos).values({
             userId: session.user.id,
@@ -67,10 +79,13 @@ export async function createTodo(formData: FormData) {
             dueDate: validatedDueDate ? new Date(validatedDueDate) : null,
         });
 
-        console.log("Todo inserted successfully");
+        console.log('✅ [createTodo] Todo created successfully!');
         revalidatePath("/dashboard");
     } catch (error) {
-        console.error("Error in createTodo:", error);
+        console.error('❌ [createTodo] ERROR:', error);
+        console.error('❌ [createTodo] Error name:', (error as Error).name);
+        console.error('❌ [createTodo] Error message:', (error as Error).message);
+        console.error('❌ [createTodo] Full error:', JSON.stringify(error, null, 2));
         throw error;
     }
 }

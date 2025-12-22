@@ -25,6 +25,9 @@ Build a visual, interactive, and persistent Todo application. "Front end" for th
 -   `index.ts`: Export `db` instance connected to Neon.
 
 ### 4. Backend & Auth (The Logic)
+#### [NEW] src/proxy.ts
+-   Lightweight redirects (unauthenticated -> login).
+
 #### [NEW] src/lib/auth.ts
 -   Configure Better-Auth with Email/Pass provider.
 -   Export `auth` helper for server actions.

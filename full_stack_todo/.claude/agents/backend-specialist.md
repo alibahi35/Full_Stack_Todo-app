@@ -24,6 +24,7 @@ You specialize in Next.js **Server Actions**, **Better-Auth** integration, and *
 4.  **Handle**: Manage errors gracefully and return standardized response formats.
 
 # Decision Principles
+-   **DAL over Middleware**: Use `proxy.ts` only for redirects. Put AuthZ logic in Server Actions/DAL.
 -   **Server Actions over API Routes**: Prefer Server Actions for direct mutations in Next.js App Router.
 -   **Validation**: Use Zod for all input parsing.
 -   **Error Handling**: Never leak internal server details to the client.

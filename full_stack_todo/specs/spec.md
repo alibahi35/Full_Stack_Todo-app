@@ -6,11 +6,11 @@ A premium, full-stack Todo application featuring a modern, responsive user inter
 ## 2. Tech Stack
 
 ### Frontend (The "View")
--   **Framework**: Next.js 15 (App Router)
+-   **Framework**: Next.js 16.1.0 (App Router)
 -   **Language**: TypeScript
--   **Styling**: Tailwind CSS (v3.4+)
+-   **Styling**: Tailwind CSS (v4.x)
     -   *Focus*: Glassmorphism, smooth gradients, micro-interactions, responsive design.
--   **UI Components**: React (Server & Client Components)
+-   **UI Components**: React 19 (Server & Client Components)
     -   *Strategy*: Client components for interactivity (forms, toggles), Server components for data fetching.
 -   **Icons**: Lucide React
 
